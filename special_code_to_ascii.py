@@ -31,14 +31,11 @@ isSpace = True;
 for i in special_code:
 	if(ord(i) == 40): 
 		output.write("\n")
-		# print "\n"
 		isSpace = True
 	for j in range(ord(i) - 40):
 		if(isSpace): 
 			output.write(fillw)
-			# print " ",
 		else:
 			output.write(fill)
-			# print "8",
 	isSpace = not isSpace
 
