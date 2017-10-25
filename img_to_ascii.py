@@ -29,9 +29,6 @@ if(img is None):
 	print("Input file doesnt exist")
 	exit(0)
 
-target_file = open(output + ".html", 'w')
-target_file.truncate() 
-
 #Auto scaling
 h, w = img.shape[:2]
 #Height and width limits to how big the ascii text should be
@@ -63,19 +60,21 @@ if invert:
 depth = len(ascii_shades)
 shade = 0
 
-#HTML initial body
-target_file.write("<html> \n <body> \n")
-target_file.write('<div class="ascii-art" style="font: 5px monospace ; text-align: center;"> \n')
+with open(output + ".html", 'w') as target_file:
+	target_file.truncate() 
+	#HTML initial body
+	target_file.write("<html> \n <body> \n")
+	target_file.write('<div class="ascii-art" style="font: 5px monospace ; text-align: center;"> \n')
 
-for row in resized_img:
-	for val in row:
-		#Loop to select appropriate shade
-		for i in range(depth):
-			if (val > 255*i/depth):
-				shade = i
+	for row in resized_img:
+		for val in row:
+			#Loop to select appropriate shade
+			for i in range(depth):
+				if (val > 255*i/depth):
+					shade = i
 
-		target_file.write(ascii_shades[shade])
-	target_file.write('\n')
+			target_file.write(ascii_shades[shade])
+		target_file.write('\n')
 
-#HTML ending body
-target_file.write("</body> \n </html> \n")
+	#HTML ending body
+	target_file.write("</body> \n </html> \n")
