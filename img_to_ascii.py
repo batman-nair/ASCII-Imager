@@ -3,7 +3,7 @@ import argparse
 
 ap = argparse.ArgumentParser(
 	description="Convert images to ascii")
-ap.add_argument("-i", "--input", required=True, 
+ap.add_argument("-i", "--input", required=True,
 	help="Filename of input image")
 ap.add_argument("-o", "--output", default=None,
 	help="Filename for output files")
@@ -53,18 +53,18 @@ resized_img = cv2.resize(img, (0,0), fx = fx, fy = fy)
 
 
 #Change the shades for your own liking
-ascii_shades = ['M', '#', '+', ';', ':', ',', '.']
+ascii_shades = list('M@GOCc+;:,. ')
 if invert:
 	#Reverse list
 	ascii_shades = ascii_shades[::-1]
 depth = len(ascii_shades)
 shade = 0
 
-with open(output + ".html", 'w') as target_file:
-	target_file.truncate() 
-	#HTML initial body
-	target_file.write("<html> \n <body> \n")
-	target_file.write('<div class="ascii-art" style="font: 5px monospace ; text-align: center;"> \n')
+with open(output + ".txt", 'w') as target_file:
+	target_file.truncate()
+	# #HTML initial body
+	# target_file.write("<html> \n <body> \n")
+	# target_file.write('<div class="ascii-art" style="font: 5px monospace ; text-align: center;"> \n')
 
 	for row in resized_img:
 		for val in row:
@@ -76,5 +76,5 @@ with open(output + ".html", 'w') as target_file:
 			target_file.write(ascii_shades[shade])
 		target_file.write('\n')
 
-	#HTML ending body
-	target_file.write("</body> \n </html> \n")
+	# #HTML ending body
+	# target_file.write("</body> \n </html> \n")
