@@ -13,6 +13,8 @@ def main():
                     (Sample values [Cols]x[Rows]: '200x' '300x100')")
     ap.add_argument("-inv", "--invert", default=False, action='store_true',
                     help="Invert the dark and light shades")
+    ap.add_argument("-html", "--html", default=False, action='store_true',
+                    help="Generate HTML output")
 
     args = ap.parse_args()
 
@@ -28,7 +30,10 @@ def main():
     invert = args.invert
 
     ascii_text = ascii_image.image_to_ascii(input_file, size=(max_cols, max_rows), invert=invert)
-    ascii_image.ascii_to_text(output_file, ascii_text)
+    if args.html:
+        ascii_image.ascii_to_html(output_file, ascii_text)
+    else:
+        ascii_image.ascii_to_text(output_file, ascii_text)
 
 if __name__ == '__main__':
     main()

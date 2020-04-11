@@ -2,7 +2,7 @@ import cv2
 
 # Height and width limits to how big the ascii text should be
 WIDTH_LIMIT = 200.0
-HEIGHT_LIMIT = 200.0
+HEIGHT_LIMIT = 150.0
 
 def _scale_image(img, size=None):
     img = cv2.resize(img, (0, 0), fx=1, fy=0.6) # Letter width usually 0.6-1 times less that height
@@ -56,3 +56,15 @@ def ascii_to_text(output_file, output_text):
     with open(output_file + ".txt", 'w') as target_file:
         target_file.truncate()
         target_file.write(output_text)
+
+def ascii_to_html(output_file, output_text):
+    with open(output_file + ".html", 'w') as target_file:
+        target_file.truncate()
+        target_file.write("<!DOCTYPE html>\n"
+                          "<html>\n"
+                          "<body style='text-align: center;'>\n"
+                          "<pre style='font-size:0.6em; line-height:1.1em;'>\n")
+        target_file.write(output_text)
+        target_file.write("</pre>\n"
+                          "</body>\n"
+                          "</html>\n")
