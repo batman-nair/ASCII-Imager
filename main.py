@@ -5,11 +5,12 @@ def main():
     ap = argparse.ArgumentParser(
         description="Convert images to ascii")
     ap.add_argument("-i", "--input", required=True,
-                    help="Filename of input image")
+                    help="Input file name")
     ap.add_argument("-o", "--output", default=None,
-                    help="Filename for output files")
-    ap.add_argument("-s", "--scale", default=1.0,
-                    help="Scale(Scale <1 for smaller text output)")
+                    help="Output file base name. Extension not needed")
+    ap.add_argument("-s", "--size", default=None,
+                    help="Size as number of rows and cols of characters. \
+                    (Sample values [Cols]x[Rows]: '200x' '300x100')")
     ap.add_argument("-inv", "--invert", default=False, action='store_true',
                     help="Invert the dark and light shades")
 
@@ -21,10 +22,12 @@ def main():
     if args.output is not None:
         output_file = args.output
 
-    scale = float(args.scale)
+    cols, rows = args.size.split('x') if args.size else (0, 0)
+    max_cols = int(cols) if cols else 0
+    max_rows = int(rows) if rows else 0
     invert = args.invert
 
-    ascii_text = ascii_image.image_to_ascii(input_file, scale=scale, invert=invert)
+    ascii_text = ascii_image.image_to_ascii(input_file, size=(max_cols, max_rows), invert=invert)
     ascii_image.ascii_to_text(output_file, ascii_text)
 
 if __name__ == '__main__':

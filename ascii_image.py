@@ -1,37 +1,37 @@
 import cv2
 
-#Height and width limits to how big the ascii text should be
-WIDTH_LIMIT = 100.0
-HEIGHT_LIMIT = 100.0
+# Height and width limits to how big the ascii text should be
+WIDTH_LIMIT = 200.0
+HEIGHT_LIMIT = 200.0
 
-def _scale_image(img, scale=1):
+def _scale_image(img, size=None):
+    img = cv2.resize(img, (0, 0), fx=1, fy=0.6) # Letter width usually 0.6-1 times less that height
     height, width = img.shape[:2]
-    print("Height, width: ", height, width)
-    min_yscale = HEIGHT_LIMIT/height
-    min_xscale = WIDTH_LIMIT/width
-    #Check to see if scaling based on height or width is more
-    min_scale = min_yscale
-    if min_xscale < min_yscale:
-        min_scale = min_xscale
+    max_cols, max_rows = 0, 0
+    if size is not None:
+        max_cols, max_rows = size
+    if max_cols and max_rows:
+        return cv2.resize(img, (max_cols, max_rows))
 
-    # Text size scaling
-    yscale = min_scale*0.7
-    xscale = min_scale*1
+    min_scale = 1
+    if max_cols or max_rows:
+        yscale = max_rows/height
+        xscale = max_cols/width
+        min_scale = yscale + xscale # Atleast one will be zero
+    else:           # No size specified
+        min_xscale = WIDTH_LIMIT/width
+        min_yscale = HEIGHT_LIMIT/height
+        min_scale = min_xscale if min_xscale < min_yscale else min_yscale
 
-    #Additional program scaling
-    final_xscale = xscale*scale
-    final_yscale = yscale*scale
-
-    print("Height, width: ", height*final_yscale, width*final_xscale)
-    resized_img = cv2.resize(img, (0, 0), fx=final_xscale, fy=final_yscale)
+    resized_img = cv2.resize(img, (0, 0), fx=min_scale, fy=min_scale, interpolation=cv2.INTER_AREA)
     return resized_img
 
-def image_to_ascii(input_file, scale=None, invert=False):
+def image_to_ascii(input_file, size=None, invert=False):
     img = cv2.imread(input_file, 0)
     if img is None:
         raise ValueError("File doesn't exist")
-    if scale is not None:
-        img = _scale_image(img, scale)
+    if size is not None:
+        img = _scale_image(img, size)
 
     #Change the shades for your own liking
     ascii_shades = list('M@GOCc+;:,. ')
@@ -47,7 +47,6 @@ def image_to_ascii(input_file, scale=None, invert=False):
             for index in range(depth):
                 if val > 255*index/depth:
                     shade = index
-
             output_text += ascii_shades[shade]
         output_text += '\n'
 
