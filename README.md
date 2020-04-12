@@ -1,7 +1,7 @@
 # Ascii-Imager
 Recreate an image using Ascii characters.
 
-The main image to ascii conversion code can be done in less than 15 lines of code using python/opencv. You can find the code in `image_to_ascii_mini.py`.
+The core implementation code is less than 15 lines of code using Python/OpenCV. You can find the code in `image_to_ascii_mini.py`.
 
 A JS implementation of the code can be found online [here](https://batman-nair.github.io/ASCII-Imager/).
 
@@ -15,7 +15,7 @@ A JS implementation of the code can be found online [here](https://batman-nair.g
 </p>
 
 ## Usage
-The tool is made using Python, OpenCV2. Generating image output is done using PIL.
+The tool requires Python, OpenCV2. Generating image output is done using PIL.
 
 ```
 usage: main.py [-h] -i INPUT [-o OUTPUT] [-s SIZE] [-inv] [-html] [-img]
