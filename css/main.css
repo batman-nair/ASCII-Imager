@@ -1,6 +1,7 @@
 body {
     text-align: center;
     font-family: monospace;
+    margin-bottom: 50px;
 }
 
 #file-label {
