@@ -1,0 +1,48 @@
+body {
+    text-align: center;
+}
+
+#file-label {
+    padding: 5px 8px;
+    border-radius: 5px;
+    border: 1px solid #a0a0a0a0;
+    background: #fafafa;
+    cursor: pointer;
+    transition: 0.1s ease-out;
+}
+#file-label:hover {
+    background: #eaeaea;
+    border-color: #fafafa;
+}
+
+#file {
+    display: none;
+}
+
+.settings-container {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.label-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2em;
+    margin: 10px 0;
+}
+.label-container label {
+    margin: 0 10px;
+}
+
+#previewImg {
+    max-width: 80%;
+    max-height: 80vh;
+    margin: 0 auto;
+}
+
+#asciiOutput {
+    font-size: 0.6em;
+    line-height: 1.1em;
+    display: inline-block;
+}

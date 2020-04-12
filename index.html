@@ -1,9 +1,21 @@
 <!DOCTYPE html>
 <html>
-<body style='text-align: center;'>
-  <input type="file" onchange="previewFile()"><br>
-  <img src="samples/dog.jpg" style="max-width:80%; max-height: 80vh; margin: 0 auto;">
-<pre style='font-size:0.6em; line-height:1.1em; display:inline-block;'>
+  <title> Ascii-Imager: Image to Ascii converter </title>
+  <head>
+    <meta name="title" content="Ascii-Imager">
+    <meta name="description" content="Image to Ascii converter">
+
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+  </head>
+<body>
+  <h1> Image to Ascii Converter </h1>
+  <label id="file-label" for="file"> Choose file to convert </label>
+  <input id="file" type="file" accept="image/*" onchange="previewAndMakeAscii()"><br>
+
+  <h3> Preview Image </h3>
+  <img id="previewImg" src="samples/dog.jpg">
+  <h3> Ascii Image </h3>
+  <pre id="asciiOutput">
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@@MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
@@ -73,6 +85,16 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMOOOOCc::,,,,,,,,,,,,
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@OOOOOC+:::,,,,,,,,,,,,,,,,,,,,::::::::::::::::::;;+;++;++c+;;;;;;;+cO@MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@OOOOCcc;;:,,,,,,,,,,,,,,,,,,,:,:::::,,,,::,::::;;;;;++++++c+;;;;+;+cCGMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 </pre>
+  <div class="settings-container">
+  <div class="label-container">
+    <label for="font-scale"> Font Size: </label>
+    <input id="font-scale" type="range" min="0.5" max="2" step="0.1" value="0.6">
+  </div>
+  <div class="label-container">
+    <input type="checkbox" id="invert" name="invert" value="Invert">
+    <label for="invert"> Invert </label>
+  </div>
+  </div>
 <script>
   var charRatio = 0.6, charWidth = 8, charHeight = 15, charScale = 0.6;
   text = document.createElement("pre");
@@ -87,40 +109,38 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@OOOOCcc;;:,,,,,,,,,,
   charHeight = text.clientHeight;
   charRatio = text.clientWidth/text.clientHeight;
   document.body.removeChild(text);
-  // console.log("charRatio: ", charRatio, " charWidth: ", charWidth, " charHeight: ", charHeight, " charScale: ", charScale);
 
   var canvas = document.createElement('canvas'),
       ctx = canvas.getContext('2d');
   var asciiOutput = document.querySelector("pre");
   var previewImg = document.querySelector('img');
 
-  function updateAsciiTextFromImgSrc(imgSrc) {
+  function updateAsciiTextFromImgSrc(imgSrc, isInverted) {
       var img = new Image();
       img.src = imgSrc;
-      img.onload = () => updateAsciiText(img);
+      img.onload = () => updateAsciiText(img, isInverted);
   }
 
-  function updateAsciiText(img) {
-      // console.log("Creating ASCII");
-      // console.log("Image width: ", img.width, " height: ", img.height);
+  function updateAsciiText(img, isInverted) {
       var asciiShades = "M@GOCc+;:,. ".split(""),
 	  asciiDepth = asciiShades.length;
+      if (isInverted)
+	  asciiShades = asciiShades.reverse();
+
       var widthLimit = previewImg.clientWidth, // screen.width*0.8,
 	  heightLimit = previewImg.clientHeight; //screen.height*0.8;
-      var maxWidth = widthLimit/(charWidth*charScale),
-	  maxHeight = heightLimit/(charHeight*charScale);
+      var charCols = widthLimit/(charWidth*charScale),
+	  charRows = heightLimit/(charHeight*charScale);
 
-      var minXScale = maxWidth/img.width,
-	  minYScale = maxHeight/(img.height*charRatio);
+      var minXScale = charCols/img.width,
+	  minYScale = charRows/(img.height*charRatio);
       var scale = minYScale;
       if (minXScale < minYScale)
 	  scale = minXScale;
-      // console.log("Scale factor: ", scale);
 
       canvas.width = parseInt(img.width * scale);
       canvas.height = parseInt(img.height * scale * charRatio);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      // console.log("Canvas height: ", canvas.height, " Width: ", canvas.width);
 
       var asciiText = "";
       for (var yy = 0; yy < canvas.height; ++yy) {
@@ -134,22 +154,17 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@OOOOCcc;;:,,,,,,,,,,
 	      while (gray > shade*255/asciiDepth)
 		  ++shade;
 	      asciiText += asciiShades[shade-1];
-	      // console.log("gray: ", gray, " shade: ", shade, " pixel: ", pixel);
 	  }
 	  asciiText += '\n';
       }
-      // console.log("Updating ASCCI");
       asciiOutput.innerText = asciiText;
       asciiOutput.style.fontSize = charScale + "em";
   }
 
-  function previewFile() {
+  function previewAndMakeAscii() {
       var reader = new FileReader();
-      var file = document.querySelector('input[type=file]').files[0];
-
+      var file = document.getElementById("file").files[0];
       reader.addEventListener("load", function () {
-	  // console.log("Updating Image!");
-	  // convert image file to base64 string
 	  previewImg.src = reader.result;
 	  updateAsciiTextFromImgSrc(reader.result);
       }, false);
@@ -160,6 +175,17 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@OOOOCcc;;:,,,,,,,,,,
   }
 
   updateAsciiTextFromImgSrc(previewImg.src);
+
+  var slider = document.getElementById("font-scale");
+  slider.oninput = function() {
+      charScale = parseFloat(this.value);
+      updateAsciiTextFromImgSrc(previewImg.src);
+  }
+  var invert = document.getElementById("invert");
+  invert.oninput = function() {
+      isInverted = this.checked;
+      updateAsciiTextFromImgSrc(previewImg.src, isInverted);
+  }
 </script>
 </body>
 </html>
