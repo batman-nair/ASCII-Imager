@@ -114,6 +114,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@OOOOCcc;;:,,,,,,,,,,
       ctx = canvas.getContext('2d');
   var asciiOutput = document.querySelector("pre");
   var previewImg = document.querySelector('img');
+  var isInverted = false;
 
   function updateAsciiTextFromImgSrc(imgSrc, isInverted) {
       var img = new Image();
@@ -166,7 +167,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@OOOOCcc;;:,,,,,,,,,,
       var file = document.getElementById("file").files[0];
       reader.addEventListener("load", function () {
 	  previewImg.src = reader.result;
-	  updateAsciiTextFromImgSrc(reader.result);
+	  updateAsciiTextFromImgSrc(reader.result, isInverted);
       }, false);
 
       if (file) {
@@ -174,7 +175,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@OOOOCcc;;:,,,,,,,,,,
       }
   }
 
-  updateAsciiTextFromImgSrc(previewImg.src);
+  updateAsciiTextFromImgSrc(previewImg.src, isInverted);
 
   var slider = document.getElementById("font-scale");
   slider.oninput = function() {
