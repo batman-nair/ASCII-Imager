@@ -76,27 +76,27 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@OOOOCcc;;:,,,,,,,,,,
 <script>
 
   var WIDTH_LIMIT = 200.0,
-      HEIGHT_LIMIT = 150.0;
+      HEIGHT_LIMIT = 100.0;
   var ASCII_SHADES = "M@GOCc+;:,. ".split(""),
       ASCII_DEPTH = ASCII_SHADES.length;
   var canvas = document.createElement('canvas'),
       ctx = canvas.getContext('2d');
 
   function updateAsciiText(img) {
-      console.log("Creating ASCII");
-      console.log("Image width: ", img.width, " height: ", img.height);
+      // console.log("Creating ASCII");
+      // console.log("Image width: ", img.width, " height: ", img.height);
 
       var minXScale = WIDTH_LIMIT/img.width;
-      var minYScale = HEIGHT_LIMIT/img.height;
+      var minYScale = HEIGHT_LIMIT/(img.height*0.6);
       var scale = minYScale;
       if (minXScale < minYScale)
 	  scale = minXScale;
-      console.log("Scale factor: ", scale);
+      // console.log("Scale factor: ", scale);
 
-      canvas.width = img.width * scale;
-      canvas.height = img.height * scale;
+      canvas.width = parseInt(img.width * scale);
+      canvas.height = parseInt(img.height * scale * 0.6);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      console.log("Canvas height: ", canvas.height, " Width: ", canvas.width);
+      // console.log("Canvas height: ", canvas.height, " Width: ", canvas.width);
 
       var asciiText = "";
       for (var yy = 0; yy < canvas.height; ++yy) {
@@ -116,7 +116,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@OOOOCcc;;:,,,,,,,,,,
 	  asciiText += '\n';
       }
 
-      console.log("Updating ASCCI");
+      // console.log("Updating ASCCI");
       document.querySelector("pre").innerText = asciiText;
       // document.querySelector("body").appendChild(canvas);
   }
@@ -128,13 +128,15 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@OOOOCcc;;:,,,,,,,,,,
       var preview = document.querySelector('img');
 
       reader.addEventListener("load", function () {
-	  console.log("Updating Image!");
+	  // console.log("Updating Image!");
 	  // convert image file to base64 string
 	  preview.src = reader.result;
 
 	  var img = new Image();
 	  img.src = reader.result;
-	  updateAsciiText(img);
+	  // console.log("Image at reader width: ", img.width, " height: ", img.height);
+
+	  img.onload = () => updateAsciiText(img);
       }, false);
 
       if (file) {
