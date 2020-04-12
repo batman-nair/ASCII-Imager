@@ -1,0 +1,3 @@
+samples/* linguist-documentation
+
+*.html linguist-detectable=false
