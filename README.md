@@ -37,6 +37,7 @@ optional arguments:
 ```
 
 Sample Usage example:
+
 `python main.py -i samples/leo.jpg`
 
 `python main.py -i samples/dog.jpg -s '100x' -o dog_ascii -img`
@@ -47,7 +48,7 @@ Sample Usage example:
 If you are intersted in contributing there are a lot more things that can be done like
 1. GIF to Ascii GIF
 2. Video to Ascii Video
-3. Different language implementations
+3. Different language implementations maybe
 
 
 If you like the project, leave a star. :)
