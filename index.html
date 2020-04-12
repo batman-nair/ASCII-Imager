@@ -2,7 +2,7 @@
 <html>
 <body style='text-align: center;'>
   <input type="file" onchange="previewFile()"><br>
-  <img src="samples/dog.jpg" style="max-width:80%; margin: 0 auto;">
+  <img src="samples/dog.jpg" style="max-width:80%; max-height: 80vh; margin: 0 auto;">
 <pre style='font-size:0.6em; line-height:1.1em; display:inline-block;'>
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
@@ -74,27 +74,51 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@OOOOOC+:::,,,,,,,,,,
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@OOOOCcc;;:,,,,,,,,,,,,,,,,,,,:,:::::,,,,::,::::;;;;;++++++c+;;;;+;+cCGMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 </pre>
 <script>
+  var charRatio = 0.6, charWidth = 8, charHeight = 15, charScale = 0.6;
+  text = document.createElement("pre");
+  document.body.appendChild(text);
+  text.style.height = 'auto';
+  text.style.width = 'auto';
+  text.style.position = 'absolute';
+  text.style.whiteSpace = 'pre';
+  text.style.lineHeight = '1.1em';
+  text.innerHTML = 'M';
+  charWidth = text.clientWidth;
+  charHeight = text.clientHeight;
+  charRatio = text.clientWidth/text.clientHeight;
+  document.body.removeChild(text);
+  // console.log("charRatio: ", charRatio, " charWidth: ", charWidth, " charHeight: ", charHeight, " charScale: ", charScale);
 
-  var WIDTH_LIMIT = 200.0,
-      HEIGHT_LIMIT = 100.0;
-  var ASCII_SHADES = "M@GOCc+;:,. ".split(""),
-      ASCII_DEPTH = ASCII_SHADES.length;
   var canvas = document.createElement('canvas'),
       ctx = canvas.getContext('2d');
+  var asciiOutput = document.querySelector("pre");
+  var previewImg = document.querySelector('img');
+
+  function updateAsciiTextFromImgSrc(imgSrc) {
+      var img = new Image();
+      img.src = imgSrc;
+      img.onload = () => updateAsciiText(img);
+  }
 
   function updateAsciiText(img) {
       // console.log("Creating ASCII");
       // console.log("Image width: ", img.width, " height: ", img.height);
+      var asciiShades = "M@GOCc+;:,. ".split(""),
+	  asciiDepth = asciiShades.length;
+      var widthLimit = previewImg.clientWidth, // screen.width*0.8,
+	  heightLimit = previewImg.clientHeight; //screen.height*0.8;
+      var maxWidth = widthLimit/(charWidth*charScale),
+	  maxHeight = heightLimit/(charHeight*charScale);
 
-      var minXScale = WIDTH_LIMIT/img.width;
-      var minYScale = HEIGHT_LIMIT/(img.height*0.6);
+      var minXScale = maxWidth/img.width,
+	  minYScale = maxHeight/(img.height*charRatio);
       var scale = minYScale;
       if (minXScale < minYScale)
 	  scale = minXScale;
       // console.log("Scale factor: ", scale);
 
       canvas.width = parseInt(img.width * scale);
-      canvas.height = parseInt(img.height * scale * 0.6);
+      canvas.height = parseInt(img.height * scale * charRatio);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       // console.log("Canvas height: ", canvas.height, " Width: ", canvas.width);
 
@@ -106,37 +130,28 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@OOOOCcc;;:,,,,,,,,,,
 	      var gray = 0.2627*data[0] + 0.6780*data[1] + 0.0593*data[2]; // ITU-R BT.2100 standard
 	      if (gray > 255)
 		  gray = 255
-
 	      var shade = 1;
-	      while (gray > shade*255/ASCII_DEPTH)
+	      while (gray > shade*255/asciiDepth)
 		  ++shade;
-	      asciiText += ASCII_SHADES[shade-1];
+	      asciiText += asciiShades[shade-1];
 	      // console.log("gray: ", gray, " shade: ", shade, " pixel: ", pixel);
 	  }
 	  asciiText += '\n';
       }
-
       // console.log("Updating ASCCI");
-      document.querySelector("pre").innerText = asciiText;
-      // document.querySelector("body").appendChild(canvas);
+      asciiOutput.innerText = asciiText;
+      asciiOutput.style.fontSize = charScale + "em";
   }
-
 
   function previewFile() {
       var reader = new FileReader();
       var file = document.querySelector('input[type=file]').files[0];
-      var preview = document.querySelector('img');
 
       reader.addEventListener("load", function () {
 	  // console.log("Updating Image!");
 	  // convert image file to base64 string
-	  preview.src = reader.result;
-
-	  var img = new Image();
-	  img.src = reader.result;
-	  // console.log("Image at reader width: ", img.width, " height: ", img.height);
-
-	  img.onload = () => updateAsciiText(img);
+	  previewImg.src = reader.result;
+	  updateAsciiTextFromImgSrc(reader.result);
       }, false);
 
       if (file) {
@@ -144,7 +159,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM@OOOOCcc;;:,,,,,,,,,,
       }
   }
 
-
+  updateAsciiTextFromImgSrc(previewImg.src);
 </script>
 </body>
 </html>
