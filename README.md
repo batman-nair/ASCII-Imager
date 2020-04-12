@@ -10,7 +10,7 @@ A JS implementation of the code can be found online [here](https://batman-nair.g
 <p align="center">
 	<img src="samples/dog.jpg" alt="Dog original">
 	<img src="samples/dog_ascii.png" alt="Dog ascii">
-	<img src="samples/baby_yoda.jpg" alt="Baby Yoda original">
+	<img src="samples/baby_yoda.jpeg" alt="Baby Yoda original">
 	<img src="samples/baby_yoda_ascii.png" alt="Baby Yoda ascii">
 </p>
 
@@ -37,6 +37,8 @@ optional arguments:
 ```
 
 Sample Usage example:
+`python main.py -i samples/leo.jpg`
+
 `python main.py -i samples/dog.jpg -s '100x' -o dog_ascii -img`
 
 
@@ -48,4 +50,4 @@ If you are intersted in contributing there are a lot more things that can be don
 3. Different language implementations
 
 
-If you like the project leave a star. :)
+If you like the project, leave a star. :)
