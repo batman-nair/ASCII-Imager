@@ -68,3 +68,19 @@ def ascii_to_html(output_file, output_text):
         target_file.write("</pre>\n"
                           "</body>\n"
                           "</html>\n")
+
+def ascii_to_image(output_file, output_text):
+    from PIL import Image, ImageDraw, ImageFont
+    ascii_lines = output_text.split('\n')[:-1] # Last line is empty
+    rows, cols = len(ascii_lines), len(ascii_lines[0])
+
+    font = ImageFont.truetype("fonts/Inconsolata-Regular.ttf")
+    # font = ImageFont.load_default()
+    char_width, char_height = font.getsize("M")
+
+    img = Image.new("L", (char_width*cols, char_height*rows), 255)
+    draw = ImageDraw.Draw(img)
+    for ind in range(rows):
+        draw.text((0, ind*char_height), ascii_lines[ind], fill=0, font=font)
+
+    img.save(output_file + ".png")

@@ -15,6 +15,8 @@ def main():
                     help="Invert the dark and light shades")
     ap.add_argument("-html", "--html", default=False, action='store_true',
                     help="Generate HTML output")
+    ap.add_argument("-img", "--image", default=False, action='store_true',
+                    help="Generate image output")
 
     args = ap.parse_args()
 
@@ -32,6 +34,8 @@ def main():
     ascii_text = ascii_image.image_to_ascii(input_file, size=(max_cols, max_rows), invert=invert)
     if args.html:
         ascii_image.ascii_to_html(output_file, ascii_text)
+    elif args.image:
+        ascii_image.ascii_to_image(output_file, ascii_text)
     else:
         ascii_image.ascii_to_text(output_file, ascii_text)
 
